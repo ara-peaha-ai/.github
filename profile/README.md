@@ -15,7 +15,7 @@ Each stack runs in Docker on its own VPS. Both can be self-hosted.
 | Stack | What it does | Repos |
 |-------|--------------|-------|
 | **PAY** | Multi-rail inbound payments (Bitcoin, stablecoins, P2P and fiat rails) with self-custodial settlement, on top of BTCPay Server | [/orchestrator](https://github.com/ara-peaha-ai/orchestrator) (MIT) |
-| **AI** | Company memory as Markdown in git, a knowledge graph of it, and a CPU router that sends each task to commercial or self-hosted models with only the context that task needs | [/wisdom](https://github.com/ara-peaha-ai/wisdom) (MIT engine) + sovereign (private memory, one per company) |
+| **AI** | Company memory as Markdown in git, a knowledge graph of it, and a CPU router that sends each task to commercial or self-hosted models with only the context that task needs | [/wisdom](https://github.com/ara-peaha-ai/wisdom) (MIT engine) + sovereign (private memory) |
 
 Architecture, rails, and roadmap for PAY: [orchestrator README](https://github.com/ara-peaha-ai/orchestrator#readme).
 The AI model, markers, and router: [wisdom README](https://github.com/ara-peaha-ai/wisdom#readme).
