@@ -1,201 +1,40 @@
-# Ára Pe'aha Aĩ — Open-Source Multi-Rail Payment Infrastructure
+# Ára Pe'aha Aĩ
 
-Open-source, modular, and agnostic-by-design payment infrastructure for businesses and users that need practical multi-rail payment flows, self-custodial settlement, and more flexible cross-border money movement.
+**One key. Your money, your knowledge, your AI.**
 
-Ára Pe'aha Aĩ is built around **inbound rails**, **multi-rail offramps**, and self-custodial settlement. It is designed to make payment architecture more practical across markets, rails, currencies, and jurisdictions, especially where traditional payment access is fragmented, limited, or overly dependent on a single provider.
+Self-custodial payment and AI tools for businesses in emerging markets, starting in Paraguay.
 
-Ára Pe'aha Aĩ uses [BTCPay Server](https://github.com/btcpayserver/btcpayserver) as the backend and an [Aqua Wallet](https://github.com/AquaWallet/aqua-wallet) fork as the default settlement wallet.
-
-[BTCPay Server](https://github.com/btcpayserver/btcpayserver) was chosen because it is a battle-tested, widely adopted, and community-maintained API and GUI backend with some built-in rails. We also actively contribute to its [core and plugin ecosystem](https://github.com/search?q=involves%3Alearntheropes+%28org%3Abtcpayserver+OR+org%3Abtcpayserver-tether+OR+org%3Amempool%29&type=issues).
-
-[Aqua Wallet](https://github.com/AquaWallet/aqua-wallet) was chosen because it already supports settlement in **BTC on-chain and multiple stablecoins (USD and BRL for now)** by default, and can be integrated from BTCPay Server through the Shamrock protocol with a QR-based connection flow.
-
-Where direct local cashout is not yet native, Ára Pe'aha Aĩ provides practical guidance around compatible external wallets, cards, and off-ramp tools to improve real usability in Latin America and other supported regions. For instance, across all currently planned settlement chains, we already consider wallets and services such as [Belo](https://simple.belo.app/app/referral?referralCode=GIOVANNIL), [Revolut](https://revolut.com/referral/?referral-code=giovanni_learntheropes), and [Offramp](https://app.offramp.xyz/login?referralCode=njmlxf), including card and Google Pay / Apple Pay compatible paths, while more privacy-friendly card and Google Pay options may later be added through planned FixedFloat API work or collaboration with the issuer.
+The same rule drives both: whoever holds the key holds the asset. In payments, the seed holds the funds and no intermediary can freeze them. In AI, the company's knowledge stays in its own git repo, and model vendors only see one isolated task at a time, never the whole.
 
 ---
 
-## Multi-Rail Payment Architecture Approach
+## Two stacks, two servers
 
-Ára Pe'aha Aĩ is designed around a few practical choices:
+Each stack runs in Docker on its own VPS. Both can be self-hosted.
 
-- **Self-custodial by default**
-- **Agnostic in practice** — the usable rail and settlement path matter more than ideology
-- **Multi-rail by design** — different markets need different ways to pay and cash out
-- **Modular** — inbound rails, offramps, flows, and services can be enabled or left out depending on the use case
-- **Open source** — the public components remain MIT licensed, with long-term maintenance and development supported by revenue from the paid closed-source offering
+| Stack | What it does | Repos |
+|-------|--------------|-------|
+| **PAY** | Multi-rail inbound payments (Bitcoin, stablecoins, P2P and fiat rails) with self-custodial settlement, on top of BTCPay Server | [/orchestrator](https://github.com/ara-peaha-ai/orchestrator) (MIT) |
+| **AI** | Company memory as Markdown in git, a knowledge graph of it, and a CPU router that sends each task to commercial or self-hosted models with only the context that task needs | [/wisdom](https://github.com/ara-peaha-ai/wisdom) (MIT engine) + sovereign (private memory, one per company) |
 
-If an inbound rail does not already settle into an asset supported by the Aqua wallet fork, Ára Pe'aha Aĩ aims to convert it further into the supported asset that is cheapest and most functional for that case.
-
----
-
-## Architecture
-
-```mermaid
-flowchart LR
-
-subgraph walletWrap["/wallet (MIT)"]
-  walletPlatform["Aqua fork (MIT)<br/>iOS & Android"]
-  seedMono["seed phrase"]
-  seedMarket["seed phrase"]
-  seedTeam["seed phrase / xpub"]
-end
-
-mono["/orchestrator (MIT)"]
-monoBtcpay["BTCPay Server (MIT)"]
-
-subgraph docker["Docker"]
-  marketplace["/marketplace<br/>(closed-source)<br/><br/>Rails:<br/>/banxa (MIT)<br/><br/>Services:<br/>/kyc (MIT)<br/>/compliance (MIT)"]
-  marketBtcpay["BTCPay Server (MIT)"]
-end
-
-team["/team"]
-otherWallet["/wallet (MIT)"]
-builtMarket["built on"]
-builtTeam["built on"]
-
-dashboard["/dashboard (MIT)"]
-
-seedMono --> mono
-seedMarket --> marketplace
-seedTeam -.-> team
-otherWallet --> marketplace
-
-mono --> monoBtcpay
-marketplace --> marketBtcpay
-dashboard --> otherWallet
-
-marketplace -.-> builtMarket
-builtMarket -.-> mono
-
-team -.-> builtTeam
-builtTeam -.-> mono
-
-style team stroke-dasharray: 6 6
-style builtMarket fill:transparent,stroke:transparent,color:#999
-style builtTeam fill:transparent,stroke:transparent,color:#999
-style walletPlatform fill:transparent,stroke:transparent,color:#999
-
-click otherWallet "https://github.com/ara-peaha-ai/wallet" "_blank"
-click mono "https://github.com/ara-peaha-ai/orchestrator" "_blank"
-```
-
-> Closed-source repo code is only available to team members and not to external collaborators.  
-> Some modules that only work with the closed-source repo may be open-sourced at a later stage for integration into third-party external and unrelated projects.  
-> Because it is a closed-source repo, it requires enhanced verification for the marketplace admin and for users involved in high-value transactions.  
-> It is also supposed to generate enough income to maintain all the MIT repos long-term.  
+Architecture, rails, and roadmap for PAY: [orchestrator README](https://github.com/ara-peaha-ai/orchestrator#readme).
+The AI model, markers, and router: [wisdom README](https://github.com/ara-peaha-ai/wisdom#readme).
 
 ---
 
-## Inbound Multi-Rails
+## Principles
 
-| Rail | Status | Currency | Payment Methods | Settlement | Fee | Verification | Privacy |
-|------|--------|----------|-----------------|------------|-----|--------------| ------- |
-| BTC | Implemented | SATS | On-chain & Lightning | Bitcoin On-chain | None | None | Total |
-| USDT | Implemented | USD | Liquid & Polygon | USDT Liquid & Polygon | None | None | Total |
-| [Peach](https://github.com/ara-peaha-ai/orchestrator/tree/main/rails/peach) *(p2p-api-integration)* | testing | Global | Any | Bitcoin On-chain | High | None | Total |
-| [RoboSats](https://github.com/ara-peaha-ai/orchestrator/tree/main/rails/robosats) *(p2p-api-integration)* | testing | Global | Any | Bitcoin On-chain | High | None | Total |
-| Mostro *(p2p-api-integration)* | evaluating | Global | Any | Bitcoin On-chain | High | None | Total |
-| Guardarian *(cex-api-integration)* | planned | USD, EUR, GBP, CAD, AUD, JPY, TRY, PLN, SEK | Credit/Debit Cards & Google/Apple Pay | Bitcoin On-chain | Medium | None or Standard | Possible (with RUC structure) |
-| Paygate *(cex-api-integration)* | planned | Global | Credit/Debit Cards | USDT Polygon | Medium | none | Total |
-| DePix *(cex-api-integration)* | planned | BRL | Pix | BRL on Liquid | Low | None | Total |
-| Kamipay *(cex-api-integration)* | planned | BRL | Pix | USDT Polygon | Low | Standard | None |
-| MtPelerin *(cex-api-integration)* | planned | EUR & CHF | SEPA | Bitcoin On-chain OR USDT Polygon | Low | Enlached | Possible (with RUC structure) |
-| Bitzed *(cex-api-integration)* | planned | ZMW | Mobile | Bitcoin On-chain | Low | None | Total |
-| Matbea *(cex+p2p-api-integration)* | planned | RUB | Yandex Pay, Sberbank, Tinkoff, YooMoney, SBP P2P, Mobile phone | Bitcoin On-chain | Low | None | Total |
-| MoonPay ACH USD *(cex-api-integration)* | designing | USD | ACH | TBD | TBD | Standard | None |
----
-
-## Multi-Rail Offramp
-
-| Cashout | Status | Currency | Payment Methods | Verification |
-|---------|--------|----------|-----------------|--------------|
-| Freedomia Card | under discussion with the provider | USD limited settlements | card / Google Pay | None |
-| todo | ... | ... | ... | ... |
-
-Referral code for two months of the [Freedomia](https://www.freedomia.io/a/paguaitu) free plan.
-
----
-
-## Service Modules
-
-| Service | Status | Scope | Purpose | Default |
-|---------|--------|-------|---------|---------|
-| [ip](https://github.com/ara-peaha-ai/orchestrator/tree/main/services/ip) | testing | global | IP geolocation and currency detection | enabled by default for currency detection based on Cloudflare country location; detailed notes will be covered in a separate blog post about a Proton VPN vulnerability ignored by the security team; ipinfo requires a free lifetime API key |
-| [tor](https://github.com/ara-peaha-ai/orchestrator/tree/main/services/tor) | testing | global | Tor reverse proxy for onion and Tor-based integrations | enabled if consumed by an enabled rail |
-| [cors](https://github.com/ara-peaha-ai/orchestrator/tree/main/services/cors) | testing | global | CORS reverse proxy for target APIs | enabled if consumed by an enabled rail |
-| [market](https://github.com/ara-peaha-ai/orchestrator/tree/main/services/market) | testing | global | market aggregation and external offers | enabled if consumed by an enabled rail |
-| invoice | planned | multiple countries, many of them in LATAM | Programmatic electronic invoice generation upon payment settlement, based on the [Invopop](https://www.invopop.com/) solution, releasing the Paraguayan SIFEN integration using the available [TIPS SA](https://github.com/TIPS-SA) modules, with multiple LATAM countries supported | disabled by default |
-
----
-
-## Active and Planned Repositories
-
-### [/orchestrator](https://github.com/ara-peaha-ai/orchestrator)
-
-Single-user orchestrator MIT repository.
-
-It assembles inbound rails, settlement flows, and supporting services into one workspace. Active development is currently centered here.
-
-### [/wallet](https://github.com/ara-peaha-ai/wallet)
-
-An MIT fork of the Aqua Flutter Wallet for Ára Pe'aha Aĩ, with an embedded Nuxt app to manage /orchestrator settings and connect to BTCPay via the Shamrock protocol.
-
-### /dashboard
-
-Nuxt-based MIT app intended to handle payment flows through an embedded interface in the /wallet Flutter app.
-
-### /marketplace
-
-Closed-source repository for multi-user marketplace integrations of the /orchestrator repo.
-
-It is designed to include multi-user management by the marketplace admin, while funds always remain under the control of the marketplace merchant user.
-
-It will include some additional modules currently under evaluation:
-
-#### Rails
-
-- [Banxa virtual accounts](https://banxa.com/features/fiat/virtual-accounts/): ACH, SEPA, Faster Payments, and PayID rails, all to be confirmed due to poor documentation, with merchant-unique details.
-
-#### Services
-
-- Merchant KYC verification.
-- Financial operations reporting for Paraguayan clients as required by the Resolución DNIT 47/2026 compliance rules.
-- Financial operations reporting for EU clients as required by the MiCA regulation.
-
----
-
-## Use Cases for Multi-Rail Payments
-
-Ára Pe'aha Aĩ is aimed at cases where standard payment stacks are too limited, too fragile, or too dependent on a single provider.
-
-Typical use cases include:
-
-- cross-border businesses
-- businesses that need multi-rail inbound payments
-- merchants that want crypto settlement with broader payment reach
-- users in emerging markets
-- high-risk but lawful businesses
-- builders that want modular, self-hostable payment infrastructure
-- Bitcoiners
-
-It is not meant to be presented as a universal fit for every merchant.
-
----
-
-## Current Status
-
-Ára Pe'aha Aĩ is still evolving.
-
-Some components exist as working integrations, others are partial, experimental, or still being assembled into the main orchestrator. The repositories should be read as active infrastructure work, not as a finished product suite.
+- **Self-custodial by default**: funds and knowledge never sit with a platform
+- **Agnostic in practice**: the usable rail or model matters more than ideology
+- **Modular**: rails, services, and models can be enabled or left out per use case
+- **Open source**: public components are MIT; a paid closed-source offering funds their long-term maintenance
+- **Dogfooded**: the company building this runs on it every day
 
 ---
 
 ## Community & Contact
 
+- [ara.peaha.ai](https://ara.peaha.ai) · [ara@peaha.ai](mailto:ara@peaha.ai)
 - [GitHub Discussions](https://github.com/orgs/ara-peaha-ai/discussions)
-- [Telegram Group](https://t.me/ara-peaha-ai)
-- [Signal in spanish](https://signal.group/#CjQKINeqtWYuRXjYo9GtrlCEOWMJ2nWQXNG6iyds3wrRYxooEhD6gXXKAHllZUT53I5Lsxbh)  
-- [Signal in portoguese](https://signal.group/#CjQKIG98LmLuz2PTC6sfsmCqDSPcfr-K2Ik3f7jzBZxBgnHtEhCvxiDfadchzN5SsVX80uBC)
----
-
-### Project inspired by [**BitPagos**](https://web.archive.org/web/20141225131358/https://www.bitpagos.com/es/) in 2014, now prioritized as an open-source response to the recent release of a KYC-mandatory, limited-availability, fiat-settled [Stripe Payments BTCPay Plugin](https://plugin-builder.btcpayserver.org/public/plugins/stripe-payments).
+- [Signal in Spanish](https://signal.group/#CjQKINeqtWYuRXjYo9GtrlCEOWMJ2nWQXNG6iyds3wrRYxooEhD6gXXKAHllZUT53I5Lsxbh)
+- [Signal in Portuguese](https://signal.group/#CjQKIG98LmLuz2PTC6sfsmCqDSPcfr-K2Ik3f7jzBZxBgnHtEhCvxiDfadchzN5SsVX80uBC)
