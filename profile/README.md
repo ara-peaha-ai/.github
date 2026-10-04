@@ -4,7 +4,7 @@
 
 Self-custodial payment and AI tools for businesses in emerging markets, starting in Paraguay.
 
-The same rule drives both: whoever holds the key holds the asset. In payments, the seed holds the funds and no intermediary can freeze them. In AI, the company's knowledge stays in its own git repo, and model vendors only see one isolated task at a time, never the whole.
+The same rule drives both: whoever holds the key holds the asset. In payments, the seed holds the funds. In AI, the company's knowledge stays in its own git repo, and model vendors are meant to see one isolated task at a time, never the whole.
 
 ---
 
@@ -15,7 +15,7 @@ Each stack runs in Docker on its own VPS. Both can be self-hosted.
 | Stack | What it does | Repos |
 |-------|--------------|-------|
 | **PAY** | Multi-rail inbound payments (Bitcoin, stablecoins, P2P and fiat rails) with self-custodial settlement, on top of BTCPay Server | [/orchestrator](https://github.com/ara-peaha-ai/orchestrator) (MIT) |
-| **AI** | Company memory as Markdown in git, a knowledge graph of it, and a CPU router that sends each task to commercial or self-hosted models with only the context that task needs | [/wisdom](https://github.com/ara-peaha-ai/wisdom) (MIT engine) + sovereign (private memory, one per company) |
+| **AI** | Company memory as Markdown in git, a knowledge graph of it (testing), and a CPU router (planned) that sends each task to commercial or self-hosted models with only the context that task needs | [/wisdom](https://github.com/ara-peaha-ai/wisdom) (MIT engine) + sovereign (private memory) |
 
 Architecture, rails, and roadmap for PAY: [orchestrator README](https://github.com/ara-peaha-ai/orchestrator#readme).
 The AI model, markers, and router: [wisdom README](https://github.com/ara-peaha-ai/wisdom#readme).
