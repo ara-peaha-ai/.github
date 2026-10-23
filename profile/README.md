@@ -14,11 +14,11 @@ Each stack runs in Docker on its own VPS. Both can be self-hosted.
 
 | Stack | What it does | Repos |
 |-------|--------------|-------|
-| **PAY** | Multi-rail inbound payments (Bitcoin, stablecoins, P2P and fiat rails) with self-custodial settlement, on top of BTCPay Server | [/orchestrator](https://github.com/ara-peaha-ai/orchestrator) (MIT) |
-| **AI** | Company memory as Markdown in git, a knowledge graph of it (testing), and a CPU router (planned) that sends each task to commercial or self-hosted models with only the context that task needs | [/wisdom](https://github.com/ara-peaha-ai/wisdom) (MIT engine) + sovereign (private memory) |
+| **PAY** | Multi-rail inbound payments (Bitcoin, stablecoins, P2P and fiat rails) with self-custodial settlement, on top of BTCPay Server | [/pay](https://github.com/ara-peaha-ai/pay) (MIT) |
+| **AI** | Company memory as Markdown in git, a knowledge graph of it (testing), and a CPU router (planned) that sends each task to commercial or self-hosted models with only the context that task needs | [/os](https://github.com/ara-peaha-ai/os) (MIT engine) + content (private memory) |
 
-Architecture, rails, and roadmap for PAY: [orchestrator README](https://github.com/ara-peaha-ai/orchestrator#readme).
-The AI model, markers, and router: [wisdom README](https://github.com/ara-peaha-ai/wisdom#readme).
+Architecture, rails, and roadmap for PAY: [pay README](https://github.com/ara-peaha-ai/pay#readme).
+The AI model, markers, and router: [os README](https://github.com/ara-peaha-ai/os#readme).
 
 ---
 
